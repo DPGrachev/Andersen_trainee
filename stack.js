@@ -1,21 +1,33 @@
 class Stack {
-  constructor(maxSize = 10) {
+  constructor (maxSize = 10) {
     if ( !Number.isFinite(maxSize) || maxSize <= 0 ) {
       throw new Error();
     }
     
     this.maxSize = maxSize;
-    this.stack = {};
     this.size = 0;
+    this.upperElem = null;
   }
 
   push(elem) {
-    if (this.size === this.maxSize) {
+    if (this.upperElem && this.size === this.maxSize) {
       throw new Error('Стек переполнен');
     }
 
     this.size++;
-    this.stack[this.size] = elem;
+    const newElem = {
+      value: elem,
+      prev: null,
+    }
+
+    if (!this.upperElem) {
+      this.upperElem = newElem;
+
+      return;
+    }
+
+    newElem.prev = this.upperElem;
+    this.upperElem = newElem;
   }
 
   pop() {
@@ -23,16 +35,16 @@ class Stack {
       throw new Error('Стек пуст');
     }
 
-    const upperElem = this.stack[this.size];
+    const currentElem = this.upperElem;
 
-    delete this.stack[this.size];
+    this.upperElem = this.upperElem.prev;
     this.size--;
 
-    return upperElem;
+    return currentElem.value;
   }
 
   peek() {
-    return this.stack[this.size] || null;
+    return this.upperElem ? this.upperElem.value : null;
   }
 
   isEmpty() {
@@ -40,7 +52,15 @@ class Stack {
   }
 
   toArray() {
-    return Object.values(this.stack);
+    const arr = [];
+    let currentElem = this.upperElem;
+
+    while(currentElem) {
+      arr.push(currentElem.value);
+      currentElem = currentElem.prev;
+    }
+
+    return arr;
   }
 
   static fromIterable(iterable) {
