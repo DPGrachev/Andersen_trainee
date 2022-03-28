@@ -92,6 +92,18 @@ function onNumberButtonClick(evt) {
 }
 
 function enterOperator(value) {
+  if ( operandField.textContent.includes('=') ) {
+    calculator.secondValue = null;
+    calculator.operationSymbol = value;
+    calculator.operation = value;
+
+    operandField.textContent = `${calculator.firstValue} ${calculator.operationSymbol}`;
+
+    currentValueField.textContent = calculator.firstValue;
+
+    return;
+  }
+
   if (calculator.operation && calculator.firstValue && calculator.secondValue) {
     calculator.firstValue = calculator.getResult();
     calculator.secondValue = null;
